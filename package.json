@@ -1,6 +1,23 @@
 {
   "name": "photostopers-back",
   "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artemfob/photostopers-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artemfob/photostopers-back/issues"
+  },
+  "homepage": "https://github.com/artemfob/photostopers-back#readme",
+  "description": "",
   "dependencies": {
+    "express": "^4.18.1"
   }
 }
