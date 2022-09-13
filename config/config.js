@@ -1,9 +1,12 @@
-const express = require('express');
-const path = require('path')
+import express from 'express';
+import path from "path";
+import http from "http";
+import { initializeApp, cert } from 'firebase-admin/app'
+import {getStorage} from "firebase-admin/storage";
+import serviceAccount from '../firebase-key.json' assert {type: "json"}
+
 const app = express();
-const http = require('http')
-const firebase = require('firebase-admin')
-const firestore = require('firebase-admin/firestore')
+const storage = getStorage
 const firebaseConfig = {
     apiKey: "AIzaSyC8p-8UeASrWJaSCcfIJl4U5HrRF4fZxjk",
     authDomain: "photostopers.firebaseapp.com",
@@ -13,10 +16,8 @@ const firebaseConfig = {
     appId: "1:68439398764:web:3740d8f0a6c516190c3b49"
 };
 
-const { initializeApp, cert } = require('firebase-admin/app');
 
-const serviceAccount = require('../firebase-key.json')
 
 initializeApp({...firebaseConfig, credential: cert(serviceAccount)});
 
-exports.args = {express, path, app, firebaseConfig, http, firebase, firestore};
+export default {express, path, app, firebaseConfig, http, storage}
