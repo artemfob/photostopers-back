@@ -2,11 +2,13 @@ import express from 'express';
 import path from "path";
 import http from "http";
 import { initializeApp, cert } from 'firebase-admin/app'
+import {getFirestore} from 'firebase-admin/firestore';
 import {getStorage} from "firebase-admin/storage";
 import serviceAccount from '../firebase-key.json' assert {type: "json"}
 
 const app = express();
 const storage = getStorage
+const firestore = getFirestore
 const firebaseConfig = {
     apiKey: "AIzaSyC8p-8UeASrWJaSCcfIJl4U5HrRF4fZxjk",
     authDomain: "photostopers.firebaseapp.com",
@@ -20,4 +22,4 @@ const firebaseConfig = {
 
 initializeApp({...firebaseConfig, credential: cert(serviceAccount)});
 
-export default {express, path, app, firebaseConfig, http, storage}
+export default {express, path, app, http, storage, firestore, }

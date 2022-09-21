@@ -1,8 +1,15 @@
 import args from './config/config.js';
-const {express, path, app, firebaseConfig, http, storage} = args;
-app.use(express.json);
+import router from './router.js'
+import User from './user.js';
+const {express, path, app, firestore, } = args;
 
-const PORT = process.env.PORT || 8080;
+
+app.use(express.json());
+
+
+app.use('/api', router)
+
+const PORT = process.env.PORT || 10000;
 
 function start(){
     try{
@@ -15,5 +22,10 @@ function start(){
         console.log(e)}
 }
 
-
+ const foo = async ()=>{
+    const data = await User.get()
+    console.log(data);
+}
+foo()
 start()
+
