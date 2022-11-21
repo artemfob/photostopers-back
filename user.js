@@ -1,6 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
-
 const firestore = getFirestore();
 const auth = getAuth();
 
@@ -10,7 +9,7 @@ class User {
       .getUser(uid)
       .then((userRecord) => {
         firestore.collection("users").add({
-          name: userRecord.toJSON().displayName,
+          displayName: userRecord.toJSON().displayName,
           email: userRecord.toJSON().email,
           phoneNumber: userRecord.toJSON().phoneNumber,
           uid: userRecord.toJSON().uid,
@@ -18,7 +17,7 @@ class User {
           location: "",
           genre: "",
           expirience: "",
-          social: "",
+          social: {},
           bio: "",
         });
       })
@@ -26,35 +25,67 @@ class User {
         console.log(error);
       });
   }
-  async update(uid, name, email, phoneNumber) {
+  async updateCredentials(uid, displayName, email, phone, password) {
+    const data = (
+      await firestore.collection("users").where("uid", "==", uid).get()
+    ).docs[0].data();
+    await auth.updateUser(data.uid, {
+      email: email ?? data.email,
+      emailVerified: false,
+      phoneNumber: phone ?? data.phoneNumber,
+      password: password,
+      displayName: displayName ?? data.name,
+      disabled: false,
+    });
+    await this.updateData(uid, email, phone, displayName);
+  }
+  async updateData(
+    uid,
+    email,
+    phone,
+    displayName,
+    profession,
+    location,
+    genre,
+    experience,
+    social,
+    bio
+  ) {
     const docId = (
       await firestore.collection("users").where("uid", "==", uid).get()
     ).docs[0].id;
     const docData = (
       await firestore.collection("users").where("uid", "==", uid).get()
     ).docs[0].data();
-    return await firestore
+    await auth.updateUser(uid, {
+      email: email ?? docData.email,
+      emailVerified: false,
+      phoneNumber: phone ?? docData.phoneNumber,
+      displayName: displayName ?? docData.displayName,
+      disabled: false,
+    });
+    await firestore
       .collection("users")
       .doc(docId)
       .set({
-        name: name ?? docData.name,
         email: email ?? docData.email,
-        phoneNumber: phoneNumber ?? docData.phoneNumber,
-        uid: uid,
-        proffesion: "",
-        location: "",
-        genre: "",
-        expirience: "",
-        social: "",
-        bio: "",
+        phoneNumber: phone ?? docData.phoneNumber,
+        displayName: displayName ?? docData.displayName,
+        uid: uid ?? docData.uid,
+        profession: profession ?? docData.profession,
+        location: location ?? docData.location,
+        genre: genre ?? docData.genre,
+        experience: experience ?? docData.experience,
+        social: social ?? docData.social,
+        bio: bio ?? docData.bio,
       });
   }
-  async register(email, password, displayName, phoneNumber) {
+  async register(email, password, displayName, phone) {
     await auth
       .createUser({
         email: email,
         emailVerified: false,
-        phoneNumber: phoneNumber,
+        phoneNumber: phone,
         password: password,
         displayName: displayName,
         disabled: false,
@@ -63,11 +94,11 @@ class User {
         // See the UserRecord reference doc for the contents of userRecord.
         this.create(userRecord.uid);
         console.log("Successfully created new user:", userRecord.uid);
-      })
-      .catch((error) => {
-        console.log("Error creating new user:", error);
+
+        return userRecord.uid;
       });
   }
+
   async get(uid) {
     return (
       await firestore.collection("users").where("uid", "==", uid).get()

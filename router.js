@@ -1,10 +1,13 @@
 import Router from "express";
-import DocController from "./DocController.js";
-
+import UserController from "./userController.js";
+import PostController from "./postController.js";
 const router = new Router();
 
-router.post("/users/add/:uid", DocController.createUser);
-router.post("/users/get/:uid", DocController.getUser);
-router.post("/register", DocController.registerUser);
-router.post("/users/update/:uid", DocController.updateUser);
+router.post("/users/get", UserController.getUser);
+router.post("/register", UserController.registerUser);
+router.post("/update", UserController.updateUserCreds);
+router.post("/users/update", UserController.updateUserData);
+router.post("/create", PostController.createPost);
+router.post("/posts/all", PostController.getAllPosts);
+
 export default router;
